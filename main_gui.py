@@ -2,9 +2,9 @@ from test.run_all_tests import run_all_tests
 import PySimpleGUI as sg
 from dna_cryptography.encode_basic import encode_to_dna, decode_from_dna
 from dna_cryptography.encode_xor import encode_to_dna_xor, decode_from_dna_xor
-from utils import text_to_binary
-from dna_cryptography.key_generation import generate_secure_key
-from file_utils.file_utils import decodeFromFile,encodeFromFile,saveToFile
+from utilities.utils import text_to_binary
+from utilities.key_generation import generate_secure_key
+from utilities.file_utils import decodeFromFile,encodeFromFile,saveToFile
 
 def spawnMainWindow():
 

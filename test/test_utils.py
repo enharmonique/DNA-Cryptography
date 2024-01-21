@@ -1,4 +1,4 @@
-from utils import generate_random_dna_sequence, text_to_binary
+from utilities.utils import generate_random_dna_sequence, text_to_binary
 
 
 def test_generate_random_dna_sequence():

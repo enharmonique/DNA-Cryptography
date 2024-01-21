@@ -1,6 +1,6 @@
 from dna_cryptography.encode_basic import encode_to_dna, decode_from_dna
 from test.run_all_tests import run_all_tests
-from utils import text_to_binary
+from utilities.utils import text_to_binary
 
 
 def main():

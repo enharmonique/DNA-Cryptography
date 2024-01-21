@@ -1,5 +1,5 @@
 from collections.abc import Callable
-from utils import text_to_binary
+from utilities.utils import text_to_binary
 
 def decodeFromFile(path:str, key:str, decode_function:Callable[[str,str],str])->str:
     """

@@ -1,11 +1,16 @@
 from test.run_all_tests import run_all_tests
 import PySimpleGUI as sg
 from dna_cryptography.encode_basic import encode_to_dna, decode_from_dna
+from dna_cryptography.encode_xor import encode_to_dna_xor, decode_from_dna_xor
 from utils import text_to_binary
+from dna_cryptography.key_generation import generate_secure_key
+from file_utils.file_utils import decodeFromFile,encodeFromFile,saveToFile
 
 def spawnMainWindow():
 
-    raw_decode = ""
+    raw_decode = "Encrypted/Decrypted message previews show up here"
+    used_decode=decode_from_dna
+    used_encode=encode_to_dna
 
     file_list_column = [
         [
@@ -24,9 +29,13 @@ def spawnMainWindow():
         [
             sg.Button("Decode bases", key="-DECODE-",size=(40//3-1, 1),enable_events=True),
             sg.Button("Encode bases", key="-ENCODE-",size=(40//3-1, 1),enable_events=True),
-            #fixes mild bug
-            sg.Button("Save decoded", key="-SAVE-",size=(40//3-1, 1),visible=False,enable_events=True),
-            sg.FileSaveAs("Save decoded", key="-SAVE-0-",size=(40//3-1, 1),enable_events=True)
+            #fixes bug
+            sg.In(key="-SAVE-",size=(40//3-1, 1),visible=False,enable_events=True),
+            sg.FileSaveAs("Save", key="-SAVE-0-",size=(40//3-1, 1),enable_events=True)
+        ],
+        [
+            sg.Radio('default',  "RADIO1", key = "-TYPE-DEFAULT-", default=True, enable_events=True),
+            sg.Radio('xor', "RADIO1", key = "-TYPE-XOR-", enable_events=True),
         ],
         [
             sg.Column([[
@@ -36,7 +45,7 @@ def spawnMainWindow():
     ]
     window = sg.Window(title="Encrypt/Decrypt", layout=[file_list_column], margins=(100, 50))
     def notify(txt,warn=False,err=False):
-        #TODO: pick better colors
+        #TODO? pick better colors
         clr     = "#FF0000" if err else ("#FFFF00" if warn else "#64778D")
         clr_txt = "#FFFFFF" if err else ("#000000" if warn else "#FFFFFF")
         window.Find("-NOTIF-").update(txt,text_color=clr_txt,background_color=clr)
@@ -44,45 +53,47 @@ def spawnMainWindow():
     while True:
         try:
             event, values = window.read()
-            # End program if user closes window or
-            # presses the OK button
-            print(event, values)
+            print(event,values)
             if event == "-GENERATE-KEY-":
-                #TODO: GENERATE KEY
-                generated_key = "TODO: GENERATE KEY"
-                window.Find("-KEY-").update(generated_key)
-                del generated_key
-                notify("Key generated.") 
+                window.Find("-KEY-").update(generate_secure_key())
+                notify("Key generated.")
+                
+            if event.startswith("-TYPE-"):
+                if(event == "-TYPE-DEFAULT-"):
+                    used_decode=decode_from_dna
+                    used_encode=encode_to_dna
+                elif(event == "-TYPE-XOR-"):
+                    used_decode=decode_from_dna_xor
+                    used_encode=encode_to_dna_xor
+
+
             if event == "-DECODE-":
                 # decode from file
-                # TODO: use specific function so binary files work as well
-                # and error handling too
-                with open(window.Find("-FILE-").get()) as f:
-                    bases = f.read()
-                    raw_decode = decode_from_dna(bases,window.Find("-KEY-").get())
-                    raw_decode = ''.join([chr(int(raw_decode[i:i+8], 2)) for i in range(0, len(raw_decode), 8)])
-                    window.Find("-DISPLAY-").update(str(raw_decode))#TODO: handle displaying binary file data.
-                    del bases
+                raw_decode = decodeFromFile(values["-FILE-"], values["-KEY-"], used_decode)
+                raw_decode = b''.join([bytes([int(raw_decode[i:i+8], 2)]) for i in range(0, len(raw_decode), 8)])
+                
+                #try to display it as text if it's not binary
+                try:
+                    window.Find("-DISPLAY-").update(raw_decode.decode('ascii'))
+                except:
+                    window.Find("-DISPLAY-").update("Binary data:\n" + str(raw_decode))
+
+                window.Find("-SAVE-0-").update("Save decoded")
                 notify("Decoded.") 
+
             if event == "-ENCODE-":
-                # encode from file
-                # TODO: use specific function so binary files work as well
-                # and error handling too
-                with open(window.Find("-FILE-").get()) as f:
-                    txt = f.read()
-                    raw_decode = encode_to_dna(text_to_binary(txt),window.Find("-KEY-").get())
-                    window.Find("-DISPLAY-").update(raw_decode)
-                    del txt
+                raw_decode = encodeFromFile(values["-FILE-"], values["-KEY-"],used_encode)
+                window.Find("-DISPLAY-").update(raw_decode)
+                window.Find("-SAVE-0-").update("Save encoding")
                 notify("Encoded.") 
+
             if event == "-SAVE-" or event == "-SAVE-0-":
                 # save to file
-                # TODO: use specific function so saving binary files works as well.
-                path = values['-SAVE-0-']
-                with open(path,"w") as f:
-                    f.write(raw_decode)
-                del path
+                saveToFile(values['-SAVE-0-'],raw_decode)
                 notify("Saved.") 
-            if event == "OK" or event == sg.WIN_CLOSED:
+
+            if event == sg.WIN_CLOSED:
+                # End program if user closes window or
                 break
         except Exception as ex:
             notify(str(ex),err=True) 

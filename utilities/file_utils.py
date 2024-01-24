@@ -1,15 +1,16 @@
 from collections.abc import Callable
-from utilities.utils import text_to_binary
+from utilities.utils import bytes_to_binary
 
 def decodeFromFile(path:str, key:str, decode_function:Callable[[str,str],str])->str:
     """
         Returns a string of ones and zeros
     """
-    # TODO: update so binary files work as well
-    # and error handling too
     with open(path) as f:
         bases = f.read()
-        raw_decode_binary = decode_function(bases, key)
+        try:
+            raw_decode_binary = decode_function(bases, key)
+        except Exception:
+            raise Exception("Decode failed, is your file in the correct format?")
         return raw_decode_binary
 
 
@@ -17,11 +18,12 @@ def encodeFromFile(path:str, key:str, encode_function:Callable[[str,str],str])->
     """
         Returns a string of bases.
     """
-    # TODO: update so binary files work as well
-    # and error handling too
-    with open(path,"r") as f:
-        text = f.read()
-        bases = encode_function(text_to_binary(text), key)
+    with open(path,"rb") as f:
+        bytes = f.read()
+        try:
+            bases = encode_function(bytes_to_binary(bytes), key)
+        except Exception:
+            raise Exception("Decode failed, is your file in the correct format?")
         return bases
 
 def saveToFile(path:str, data):

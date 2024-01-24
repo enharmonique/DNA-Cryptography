@@ -45,8 +45,7 @@ def spawnMainWindow():
     ]
     window = sg.Window(title="Encrypt/Decrypt", layout=[file_list_column], margins=(100, 50))
     def notify(txt,warn=False,err=False):
-        #TODO? pick better colors
-        clr     = "#FF0000" if err else ("#FFFF00" if warn else "#64778D")
+        clr     = "#AA0000" if err else ("#AAAA00" if warn else "#64778D")
         clr_txt = "#FFFFFF" if err else ("#000000" if warn else "#FFFFFF")
         window.Find("-NOTIF-").update(txt,text_color=clr_txt,background_color=clr)
         pass

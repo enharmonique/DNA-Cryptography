@@ -26,3 +26,16 @@ def text_to_binary(text):
     """
     binary_data = ''.join(format(ord(char), '08b') for char in text)
     return binary_data
+
+def bytes_to_binary(data):
+    """
+    Converts a text message to binary representation.
+
+    Parameters:
+    - data (bytes): The input text message.
+
+    Returns:
+    - str: Binary representation of the input text.
+    """
+    binary_data = ''.join(format(char, '08b') for char in data)
+    return binary_data

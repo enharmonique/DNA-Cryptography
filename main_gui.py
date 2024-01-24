@@ -34,7 +34,7 @@ def spawnMainWindow():
             sg.FileSaveAs("Save", key="-SAVE-0-",size=(40//3-1, 1),enable_events=True)
         ],
         [
-            sg.Radio('default',  "RADIO1", key = "-TYPE-DEFAULT-", default=True, enable_events=True),
+            sg.Radio('default (key unused)',  "RADIO1", key = "-TYPE-DEFAULT-", default=True, enable_events=True),
             sg.Radio('xor', "RADIO1", key = "-TYPE-XOR-", enable_events=True),
         ],
         [

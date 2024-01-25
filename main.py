@@ -1,12 +1,13 @@
 from dna_cryptography.encode_basic import encode_to_dna, decode_from_dna
 from test.run_all_tests import run_all_tests
+from utilities.key_generation import generate_secure_key
 from utilities.utils import text_to_binary
 
 
 def main():
     # Example text message and secret key
     text_message = 'Hello, DNA Cryptography!'
-    secret_key = 'mysecretkey'
+    secret_key = generate_secure_key('psw')
 
     # Convert text to binary
     binary_data = text_to_binary(text_message)

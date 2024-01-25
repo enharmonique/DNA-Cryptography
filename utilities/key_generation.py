@@ -1,7 +1,7 @@
-import time
-import math
-import random
-def generate_secure_key():
-    random.seed(math.fmod(time.time(),0.1))
-    #base64 literals, about 8*3 "real" bytes
-    return ''.join(random.choice(list("abcdefghijklmnopqrstuvwxyz0123456789+/")) for _ in range(32))
+import hashlib
+
+
+def generate_secure_key(passphrase):
+    # Use a cryptographic hash function (SHA-256) to generate a key from the passphrase
+    hashed_passphrase = hashlib.sha256(passphrase.encode()).hexdigest()
+    return hashed_passphrase

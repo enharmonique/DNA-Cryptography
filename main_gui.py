@@ -54,7 +54,7 @@ def spawnMainWindow():
             event, values = window.read()
             print(event,values)
             if event == "-GENERATE-KEY-":
-                window.Find("-KEY-").update(generate_secure_key())
+                window.Find("-KEY-").update(generate_secure_key(values["-KEY-"]))
                 notify("Key generated.")
                 
             if event.startswith("-TYPE-"):
